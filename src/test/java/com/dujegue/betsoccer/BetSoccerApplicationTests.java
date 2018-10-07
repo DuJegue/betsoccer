@@ -15,16 +15,15 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.env.Environment;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
-//@TestPropertySource(locations = "classpath:user.properties")
+@TestPropertySource(locations = "classpath:user.properties")
 @SpringBootTest
 public class BetSoccerApplicationTests {
 
 	private WebDriver driver;
-
-	// private Gson gson;
 
 	@Autowired
 	private Environment env;
@@ -34,9 +33,9 @@ public class BetSoccerApplicationTests {
 
 		driver = new ChromeDriver();
 
-		driver.get("https://www.resultados.com/");
+		driver.get(env.getProperty("site.home"));
 		
-		tempo(10000);
+		sleepTime(10000);
 		
 		WebElement menuAovivo = driver.findElement(By.id("fscon"));
 		WebElement ul = menuAovivo.findElement(By.tagName("ul"));
@@ -50,9 +49,13 @@ public class BetSoccerApplicationTests {
 		WebElement tabela1 = tables.get(0);
 		List<WebElement> trs = tabela1.findElements(By.tagName("tr"));
 		
-		driver.get("https://www.resultados.com/jogo/tKRRAaVa/#resumo-de-jogo");
+		String siteGame = env.getProperty("site.game");
 		
-		tempo(5000);
+		String idGame = "tKRRAaVa";
+		
+		driver.get(siteGame + "/" + idGame + "/#resumo-de-jogo");
+		
+		sleepTime(5000);
 		
 		WebElement detailBookmarks = driver.findElement(By.id("detail-bookmarks"));
 		WebElement detailSubMenuBookmarks = detailBookmarks.findElement(By.id("detail-submenu-bookmark"));
@@ -61,7 +64,7 @@ public class BetSoccerApplicationTests {
 		
 		liSub.get(1).click();
 		
-		tempo(5000);
+		sleepTime(5000);
 		
 		WebElement mathStats = driver.findElement(By.id("tab-match-statistics"));
 		WebElement stat0 = mathStats.findElement(By.id("tab-statistics-0-statistic"));
@@ -77,31 +80,11 @@ public class BetSoccerApplicationTests {
 		assertThat("success", containsString("success"));
 	}
 	
-	private void tempo(long tmp) {
+	private void sleepTime(long tmp) {
 		try {
 			Thread.sleep(tmp);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-	
-	
-	/*
-	 * @Test public void testAccess() {
-	 * 
-	 * List<WebElement> links = driver.findElements(By.className("link-race"));
-	 * List<String> listRaceId = new ArrayList<String>();
-	 * 
-	 * String siteRace = env.getProperty("app.site.race");
-	 * 
-	 * for (WebElement webElement : links) {
-	 * listRaceId.add(webElement.getAttribute("data-race-id")); }
-	 * 
-	 * for (String raceId : listRaceId) {
-	 * 
-	 * driver.get(siteRace + raceId); }
-	 * 
-	 * assertThat("success", containsString("success")); }
-	 */
 }
